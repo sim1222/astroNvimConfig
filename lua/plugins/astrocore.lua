@@ -1,15 +1,12 @@
-if true then return {} end -- WARN: REMOVE THIS LINE TO ACTIVATE THIS FILE
+-- if true then return {} end -- WARN: REMOVE THIS LINE TO ACTIVATE THIS FILE
 
 -- AstroCore provides a central place to modify mappings, vim options, autocommands, and more!
 -- Configuration documentation can be found with `:h astrocore`
 -- NOTE: We highly recommend setting up the Lua Language Server (`:LspInstall lua_ls`)
 --       as this provides autocomplete and documentation while editing
 
----@type LazySpec
-return {
-  "AstroNvim/astrocore",
-  ---@type AstroCoreOpts
-  opts = {
+---@class AstroCoreOpts
+local opts = {
     -- Configure core features of AstroNvim
     features = {
       large_buf = { size = 1024 * 500, lines = 10000 }, -- set global limits for large files for disabling features like treesitter
@@ -70,5 +67,19 @@ return {
         -- ["<esc>"] = false,
       },
     },
-  },
+  }
+
+if vim.fn.has("win32") == 1 then
+  opts.shell = "pwsh"
+  opts.shellcmdflag = "-NoLogo -NoProfile -ExecutionPolicy RemoteSigned -Command [Console]::InputEncoding=[Console]::OutputEncoding=[System.Text.Encoding]::UTF8;"
+  opts.shellredir = "-RedirectStandardOutput %s -NoNewWindow -Wait"
+  opts.shellpipe = "2>&1 | Out-File -Encoding UTF8 %s; exit $LastExitCode"
+  opts.shellquote = ""
+  opts.shellxquote = ""
+end
+
+---@type LazySpec
+return {
+  "AstroNvim/astrocore",
+  opts = opts,
 }
